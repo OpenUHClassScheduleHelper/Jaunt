@@ -1,7 +1,6 @@
 *.class
 
 # Package Files #
-*.jar
 *.war
 *.ear
 logs
@@ -20,3 +19,4 @@ dist
 /RUNNING_PID
 /.settings
 /.target
+/bin
