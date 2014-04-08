@@ -1,23 +1,19 @@
 import com.jaunt.*;
 import com.jaunt.component.*;
+import java.util.*;
 
 public class Example18{
   public static void main(String[] args){
-    try{
-      UserAgent userAgent = new UserAgent(); 
-      userAgent.visit("https://www.sis.hawaii.edu/uhdad/avail.classes?i=MAN&t=201430&s=ICS");
-      Table table = userAgent.doc.getTable("<table class= listOfClasses>");
-      
-      System.out.println("\nColumn having 'Time'");
-      Elements elements = table.getCol("Time");
-      for (Element element : elements) {
-        //System.out.println();
-        System.out.println(element.getText());
-      }
-      
+    String url="https://www.sis.hawaii.edu/uhdad/avail.classes?i=MAN&t=201430&s=ICS";
+    JauntObj jaunt = new JauntObj(url);
+    
+    ArrayList<JauntRowItem> results = JauntObj.getResults();
+    
+    for (JauntRowItem item : results) {
+      System.out.println(item.getCrn());
     }
-    catch(JauntException e){
-      System.err.println(e);
-    }
+    
+    
+    
   }
 }
