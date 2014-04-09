@@ -12,6 +12,8 @@ public class JauntRowItem {
     private String instructor;
     private String days;
     private String time;
+    private String start;
+    private String end;
     private String location;
     
     /**
@@ -23,6 +25,7 @@ public class JauntRowItem {
     
     /**
      * Meeting times constructor.
+     * This is a convenience constructor.
      * @param crn the crn used for comparison later
      * @param days the days of the course
      * @param time the time that the course meets
@@ -33,6 +36,23 @@ public class JauntRowItem {
     	this.setDays(days);
     	this.setTime(time);
     	this.setLocation(location);
+    }
+    
+    /**
+     * Meeting times constructor.
+     * This is a convenience constructor.
+     * @param crn the crn used for comparison later
+     * @param days the days of the course
+     * @param start the start time of the course
+     * @param end the end time of the course
+     * @param location the location of the course (on the given day)
+     */
+    public JauntRowItem(String crn, String days, String start, String end, String location) {
+      this.setCrn(crn);
+      this.setDays(days);
+      this.setStart(start);
+      this.setEnd(end);
+      this.setLocation(location);
     }
     
     /**
@@ -163,5 +183,21 @@ public class JauntRowItem {
 	public void setLocation(String location) {
 		this.location = location;
 	}
+
+  public String getStart() {
+    return start;
+  }
+
+  public void setStart(String start) {
+    this.start = start;
+  }
+
+  public String getEnd() {
+    return end;
+  }
+
+  public void setEnd(String end) {
+    this.end = end;
+  }
 
 }

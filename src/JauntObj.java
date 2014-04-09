@@ -18,9 +18,10 @@ import com.jaunt.UserAgent;
 public class JauntObj {
 
 	private String url = "https://www.sis.hawaii.edu/uhdad/avail.classes?i=MAN&t=201430&s=ICS";
-	private static ArrayList<JauntRowItem> rowItems = new ArrayList<>(); // initial list
-	private static ArrayList<JauntRowItem> meetingTimes = new ArrayList<>(); // final list to be returned (with all times/days merged)
-
+	private static ArrayList<JauntRowItem> rowItems = new ArrayList<>(); // initial list of courses, needed to construct other lists
+	private static ArrayList<JauntRowItem> meetingTimes = new ArrayList<>();  // list of courses with days/time on one row (where applicable)
+  private static ArrayList<JauntRowItem> meetingTimesIndividual = new ArrayList<>(); // list of courses with days/time on individual rows
+	
 	public JauntObj() {
 		processUrl();
 	}
@@ -54,7 +55,10 @@ public class JauntObj {
 					// Only create a new row item if it is a valid CRN.
 					temp = tr.getElement(1).innerText();
 					if (isCrn(temp)) {
-						JauntRowItem item = new JauntRowItem();
+						
+					  JauntRowItem item = new JauntRowItem();
+					  JauntRowItem itemSplit = new JauntRowItem();
+						
 						item.setFocus(getFocus(tr.getElement(0).innerText())); // Focus
 						item.setCrn(tr.getElement(1).innerText()); // CRN
 						item.setCourse(tr.getElement(2).innerText()); // Course
@@ -64,31 +68,33 @@ public class JauntObj {
 						item.setDays(tr.getElement(8).innerText()); // Day
 						item.setTime(tr.getElement(9).innerText()); // Time
 						item.setLocation(tr.getElement(10).innerText()); // Location
+
 						rowItems.add(item);
+						
+						// If day = tba, don't split
+						// TODO: split times
+						if (!item.getDays().equalsIgnoreCase("tba")) {
+						  char c;
+						  int daySize = item.getDays().length();
+						  // check if day.length > 1						
+						  for (int j = 0; j < daySize; j++) {
+						    c = item.getDays().charAt(j);
+						    // for each day construct a new row
+		            item.setCrn(item.getCrn()); // CRN
+		            item.setDays(String.valueOf(c)); // Day
+						    item.setLocation(item.getLocation());
+						  }
+						}
+						
+						// add course to the list						
 						meetingTimes.add(item);
 					} else {
-						// Else if a 2nd row exists, merge it to the previous row (if valid)
+						// Else if a 2nd row exists, add it to the combined list
 						JauntRowItem meetItem = new JauntRowItem();
-						
-						StringBuilder builder = new StringBuilder(); // merge days together
-						builder.append(rowItems.get(rowItems.size()-1).getDays());
-						builder.append(" & ");
-						builder.append(tr.getElement(7).innerText());
-						
-						StringBuilder builder2 = new StringBuilder();
-						builder2.append(rowItems.get(rowItems.size()-1).getTime());
-						builder2.append(" & ");
-						builder2.append(tr.getElement(8).innerText());
-						
-						StringBuilder builder3 = new StringBuilder();
-						builder3.append(rowItems.get(rowItems.size()-1).getLocation());
-						builder3.append(" & ");
-						builder3.append(tr.getElement(9).innerText());
-
 						meetItem.setCrn(rowItems.get(rowItems.size()-1).getCrn()); // CRN
-						meetItem.setDays(builder.toString()); // Day
-						meetItem.setTime(builder2.toString()); // Time
-						meetItem.setLocation(builder3.toString()); // Location
+						meetItem.setDays(tr.getElement(7).innerText()); // Day
+						meetItem.setTime(tr.getElement(8).innerText()); // Time
+						meetItem.setLocation(tr.getElement(9).innerText()); // Location
 						meetingTimes.add(meetItem);
 					}
 				}
@@ -174,24 +180,19 @@ public class JauntObj {
 	 * This is full course listing w/ merged meeting times and null rows eliminated
 	 */
 	public static void printMeeting() {
-		// Remove duplicates
-		for (int i = 0; i < meetingTimes.size()-1; i++) {
-		  if (meetingTimes.get(i).getCrn().compareTo(meetingTimes.get(i+1).getCrn()) == 0) {
-			  // remove it
-			  meetingTimes.remove(i);
-		  }
-		}
 		
+	  /**
 		// ascii header for the console, can be safely removed
 		System.out.println("CRN, DATE, TIME, LOCATION");
 		System.out.println("-----------------------------------------------------------");
 		
-		// print all courses
+		// this is a list of courses with days/time on one line
 		for (JauntRowItem item : meetingTimes) {
 			 System.out.println(item.getCrn() + ", " + item.getDays() + ", "
 					+ item.getTime() + ", " + item.getLocation());
 		}
 		System.out.println("\ntotal courses: " + meetingTimes.size());
+		*/
 		
 		// ART 176, CRN 86905 presents a problem with appending 'a' or 'p' to the time
 		// Maybe make the start times follow some sort of rule
