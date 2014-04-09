@@ -10,10 +10,10 @@ public class Example18{
     ArrayList<JauntRowItem> results = JauntObj.getResults();
     
     for (JauntRowItem item : results) {
-      System.out.println(item.getCrn());
+      // System.out.println(item.getCrn());
     }
     
-    
-    
+    JauntObj.printMeeting();
+    // JauntObj.printResults();
   }
 }
