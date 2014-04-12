@@ -75,6 +75,24 @@ public class JauntObj {
 						// Ignore TBA times
 						if (!item.getDays().equalsIgnoreCase("tba")) { 
 						  splitTime = item.getTime().split("-");
+
+						  if (splitTime[1].endsWith("a")) {
+							  splitTime[0] += "a";
+						  }
+						  
+						  else {
+						    splitTime[1] = splitTime[1].substring(0, splitTime[1].length()-1); // remove the p from the end time
+						  
+						    int x1 = Integer.parseInt(splitTime[0]); // parse start time as int
+						    int x2 = Integer.parseInt(splitTime[1]); // parse end time as int
+						    int y1 = 0; // compare standard time
+						    int y2 = 0; // compare military time
+						    
+						    // convert x2 to military time
+						    if (!splitTime[1].contains("12")) {
+						    	// todo
+						    }
+						  }
 						}
 						
 						// If day = tba, don't split
@@ -134,11 +152,16 @@ public class JauntObj {
 						
 						String[] splitTime = new String[2]; // Array for splitting the time, it will always have a size of two (start and end)
 						splitTime = meetItem.getTime().split("-");
-								
+		
+						
 						// Also add it to the individual row list
 						// TODO: split the times
 						if (!meetItem.getDays().equalsIgnoreCase("tba")) { // Don't split TBA courses
 
+						  if (splitTime[1].endsWith("a")) {
+						    splitTime[0] += "a";
+						  }
+														
 						  for (int k = 1; k < c.length; k++) {
 						    JauntRowItem meetItemSplit = new JauntRowItem();
 						  
