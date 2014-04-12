@@ -70,6 +70,12 @@ public class JauntObj {
 						item.setLocation(tr.getElement(10).innerText()); // Location
 
 						rowItems.add(item);
+						String[] splitTime = new String[2]; // Array for splitting the time, it will always have a size of two (start and end)
+						
+						// Ignore TBA times
+						if (!item.getDays().equalsIgnoreCase("tba")) { 
+						  splitTime = item.getTime().split("-");
+						}
 						
 						// If day = tba, don't split
 						// TODO: split the times
@@ -87,7 +93,8 @@ public class JauntObj {
 						    // for each day construct a new row
 							itemSplit.setCrn(item.getCrn()); // CRN
 							itemSplit.setDays(d); // Day
-							itemSplit.setTime(item.getTime()); // Time;
+							itemSplit.setStart(splitTime[0]); // Start time;
+							itemSplit.setEnd(splitTime[1]); // End time
 						    itemSplit.setLocation(item.getLocation()); // Location
 							meetingTimesIndividual.add(itemSplit);
 							
@@ -100,7 +107,8 @@ public class JauntObj {
 						  JauntRowItem itemSplit = new JauntRowItem();  
 						  itemSplit.setCrn(item.getCrn()); // CRN
 						  itemSplit.setDays(item.getDays()); // Day
-						  itemSplit.setTime(item.getTime()); // Time;
+						  itemSplit.setStart("TBA"); // Start time
+						  itemSplit.setEnd("TBA"); // End time
 						  itemSplit.setLocation(item.getLocation()); // Location
 					      meetingTimesIndividual.add(itemSplit);
 						}
@@ -124,6 +132,9 @@ public class JauntObj {
 						String[] c = new String[daySize];
 						c = meetItem.getDays().split("");
 						
+						String[] splitTime = new String[2]; // Array for splitting the time, it will always have a size of two (start and end)
+						splitTime = meetItem.getTime().split("-");
+								
 						// Also add it to the individual row list
 						// TODO: split the times
 						if (!meetItem.getDays().equalsIgnoreCase("tba")) { // Don't split TBA courses
@@ -134,7 +145,8 @@ public class JauntObj {
 						    // for each day construct a new row
 						    meetItemSplit.setCrn(meetItem.getCrn()); // CRN
 				     		meetItemSplit.setDays(c[k]); // Day
-						    meetItemSplit.setTime(meetItem.getTime()); // Time;
+				     		meetItemSplit.setStart(splitTime[0]); // Start time
+						    meetItemSplit.setEnd(splitTime[1]); // End time;
 						    meetItemSplit.setLocation(meetItem.getLocation()); // Location
 						    meetingTimesIndividual.add(meetItemSplit);											    
 						  }
@@ -147,7 +159,8 @@ public class JauntObj {
 						    // for each day construct a new row
 						    meetItemSplit.setCrn(meetItem.getCrn()); // CRN
 				     		meetItemSplit.setDays(meetItem.getDays()); // Day
-						    meetItemSplit.setTime(meetItem.getTime()); // Time;
+							meetItemSplit.setStart("TBA"); // Start time
+							meetItemSplit.setEnd("TBA"); // End time
 						    meetItemSplit.setLocation(meetItem.getLocation()); // Location
 						    meetingTimesIndividual.add(meetItemSplit);											    
 						}
@@ -247,12 +260,12 @@ public class JauntObj {
 		
 	    
 		// ascii header for the console, can be safely removed
-		System.out.println("CRN, DAY, TIME, LOCATION");
+		System.out.println("CRN, DAY, START, END, LOCATION");
 		System.out.println("-----------------------------------------------------------");
 		
 		for (JauntRowItem item : meetingTimesIndividual) {
 			 System.out.println(item.getCrn() + ", " + item.getDays() + ", "
-					+ item.getTime() + ", " + item.getLocation());
+					+ item.getStart() + ", " + item.getEnd() + ", " + item.getLocation());
 		}
 		System.out.println("\ntotal rows: " + meetingTimesIndividual.size());
 		
