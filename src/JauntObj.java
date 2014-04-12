@@ -20,7 +20,7 @@ public class JauntObj {
 	private String url = "https://www.sis.hawaii.edu/uhdad/avail.classes?i=MAN&t=201430&s=ICS";
 	private static ArrayList<JauntRowItem> rowItems = new ArrayList<>(); // initial list of courses, needed to construct other lists
 	private static ArrayList<JauntRowItem> meetingTimes = new ArrayList<>();  // list of courses with days/time on one row (where applicable)
-  private static ArrayList<JauntRowItem> meetingTimesIndividual = new ArrayList<>(); // list of courses with days/time on individual rows
+    private static ArrayList<JauntRowItem> meetingTimesIndividual = new ArrayList<>(); // list of courses with days/time on individual rows
 	
 	public JauntObj() {
 		processUrl();
@@ -57,7 +57,7 @@ public class JauntObj {
 					if (isCrn(temp)) {
 						
 					  JauntRowItem item = new JauntRowItem();
-					  JauntRowItem itemSplit = new JauntRowItem();
+					  // JauntRowItem itemSplit = new JauntRowItem();
 						
 						item.setFocus(getFocus(tr.getElement(0).innerText())); // Focus
 						item.setCrn(tr.getElement(1).innerText()); // CRN
@@ -72,30 +72,85 @@ public class JauntObj {
 						rowItems.add(item);
 						
 						// If day = tba, don't split
-						// TODO: split times
+						// TODO: split the times
 						if (!item.getDays().equalsIgnoreCase("tba")) {
-						  char c;
+
 						  int daySize = item.getDays().length();
-						  // check if day.length > 1						
-						  for (int j = 0; j < daySize; j++) {
-						    c = item.getDays().charAt(j);
+						  String[] c = new String[daySize];
+						  c = item.getDays().split("");
+						  
+						  // Add courses to the list						
+						  for (int j = 1; j < c.length; j++) {
+							JauntRowItem itemSplit = new JauntRowItem();  
+							String d = c[j];
+							  
 						    // for each day construct a new row
-		            item.setCrn(item.getCrn()); // CRN
-		            item.setDays(String.valueOf(c)); // Day
-						    item.setLocation(item.getLocation());
+							itemSplit.setCrn(item.getCrn()); // CRN
+							itemSplit.setDays(d); // Day
+							itemSplit.setTime(item.getTime()); // Time;
+						    itemSplit.setLocation(item.getLocation()); // Location
+							meetingTimesIndividual.add(itemSplit);
+							
 						  }
-						}
 						
+						}
+
+						// Add in TBA courses
+						if (item.getDays().equalsIgnoreCase("tba")) {
+						  JauntRowItem itemSplit = new JauntRowItem();  
+						  itemSplit.setCrn(item.getCrn()); // CRN
+						  itemSplit.setDays(item.getDays()); // Day
+						  itemSplit.setTime(item.getTime()); // Time;
+						  itemSplit.setLocation(item.getLocation()); // Location
+					      meetingTimesIndividual.add(itemSplit);
+						}
+												
 						// add course to the list						
 						meetingTimes.add(item);
+						
 					} else {
+						
 						// Else if a 2nd row exists, add it to the combined list
 						JauntRowItem meetItem = new JauntRowItem();
+						
 						meetItem.setCrn(rowItems.get(rowItems.size()-1).getCrn()); // CRN
 						meetItem.setDays(tr.getElement(7).innerText()); // Day
 						meetItem.setTime(tr.getElement(8).innerText()); // Time
 						meetItem.setLocation(tr.getElement(9).innerText()); // Location
 						meetingTimes.add(meetItem);
+						
+						int daySize = meetItem.getDays().length();
+
+						String[] c = new String[daySize];
+						c = meetItem.getDays().split("");
+						
+						// Also add it to the individual row list
+						// TODO: split the times
+						if (!meetItem.getDays().equalsIgnoreCase("tba")) { // Don't split TBA courses
+
+						  for (int k = 1; k < c.length; k++) {
+						    JauntRowItem meetItemSplit = new JauntRowItem();
+						  
+						    // for each day construct a new row
+						    meetItemSplit.setCrn(meetItem.getCrn()); // CRN
+				     		meetItemSplit.setDays(c[k]); // Day
+						    meetItemSplit.setTime(meetItem.getTime()); // Time;
+						    meetItemSplit.setLocation(meetItem.getLocation()); // Location
+						    meetingTimesIndividual.add(meetItemSplit);											    
+						  }
+						}
+						
+						// Add the TBA courses to the list
+						if (meetItem.getDays().equalsIgnoreCase("tba")) {
+						    JauntRowItem meetItemSplit = new JauntRowItem();
+							  
+						    // for each day construct a new row
+						    meetItemSplit.setCrn(meetItem.getCrn()); // CRN
+				     		meetItemSplit.setDays(meetItem.getDays()); // Day
+						    meetItemSplit.setTime(meetItem.getTime()); // Time;
+						    meetItemSplit.setLocation(meetItem.getLocation()); // Location
+						    meetingTimesIndividual.add(meetItemSplit);											    
+						}
 					}
 				}
 			}			
@@ -125,9 +180,7 @@ public class JauntObj {
 
 	/**
 	 * Get the Gen Ed/focus attribute of the course, if available.
-	 * 
-	 * @param focus
-	 *            The focus.
+	 * @param focus The focus.
 	 * @return The valid focus string or a zero-length string if invalid.
 	 */
 	private static String getFocus(String focus) {
@@ -140,9 +193,7 @@ public class JauntObj {
 
 	/**
 	 * Gets the course title without the following string "Restriction: ".
-	 * 
-	 * @param title
-	 *            The title of the course.
+	 * @param title The title of the course.
 	 * @return The title of the string.
 	 */
 	private static String getTitle(String title) {
@@ -181,7 +232,7 @@ public class JauntObj {
 	 */
 	public static void printMeeting() {
 		
-	  /**
+	    /**
 		// ascii header for the console, can be safely removed
 		System.out.println("CRN, DATE, TIME, LOCATION");
 		System.out.println("-----------------------------------------------------------");
@@ -194,8 +245,16 @@ public class JauntObj {
 		System.out.println("\ntotal courses: " + meetingTimes.size());
 		*/
 		
-		// ART 176, CRN 86905 presents a problem with appending 'a' or 'p' to the time
-		// Maybe make the start times follow some sort of rule
-		// i.e. always append a p unless <something>
+	    
+		// ascii header for the console, can be safely removed
+		System.out.println("CRN, DAY, TIME, LOCATION");
+		System.out.println("-----------------------------------------------------------");
+		
+		for (JauntRowItem item : meetingTimesIndividual) {
+			 System.out.println(item.getCrn() + ", " + item.getDays() + ", "
+					+ item.getTime() + ", " + item.getLocation());
+		}
+		System.out.println("\ntotal rows: " + meetingTimesIndividual.size());
+		
 	}
 }
