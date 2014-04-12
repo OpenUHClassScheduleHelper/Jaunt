@@ -85,12 +85,29 @@ public class JauntObj {
 						  
 						    int x1 = Integer.parseInt(splitTime[0]); // parse start time as int
 						    int x2 = Integer.parseInt(splitTime[1]); // parse end time as int
-						    int y1 = 0; // compare standard time
-						    int y2 = 0; // compare military time
+						    int y1 = 0; 
+						    int y2 = 0; 
 						    
-						    // convert x2 to military time
-						    if (!splitTime[1].contains("12")) {
-						    	// todo
+						    x2 += 1200;
+						    
+						    // if the first condition is less, add an a
+						    // if the second condition is less, add a p
+						    
+						    y1 = x2 - x1;
+						    
+						    x1 += 1200;
+						    
+						    y2 = x2 - x1;
+						    
+						    if (y1 < y2) {
+						    	// append a
+						    	splitTime[0] += "a";
+						    	splitTime[1] += "p";
+						    }
+						    else {
+						    	// append p
+						    	splitTime[0] += "p";
+						    	splitTime[1] += "p";
 						    }
 						  }
 						}
@@ -161,6 +178,38 @@ public class JauntObj {
 						  if (splitTime[1].endsWith("a")) {
 						    splitTime[0] += "a";
 						  }
+							  
+						  else {
+						    splitTime[1] = splitTime[1].substring(0, splitTime[1].length()-1); // remove the p from the end time
+							  
+							    int x1 = Integer.parseInt(splitTime[0]); // parse start time as int
+							    int x2 = Integer.parseInt(splitTime[1]); // parse end time as int
+							    int y1 = 0; 
+							    int y2 = 0; 
+							    
+							    x2 += 1200;
+							    
+							    // if the first condition is less, add an a
+							    // if the second condition is less, add a p
+							    
+							    y1 = x2 - x1;
+							    
+							    x1 += 1200;
+							    
+							    y2 = x2 - x1;
+							    
+							    if (y1 < y2) {
+							    	// append a
+							    	splitTime[0] += "a";
+							    	splitTime[1] += "p";
+							    }
+							    else {
+							    	// append p
+							    	splitTime[0] += "p";
+							    	splitTime[1] += "p";
+							    }
+						  }
+					
 														
 						  for (int k = 1; k < c.length; k++) {
 						    JauntRowItem meetItemSplit = new JauntRowItem();
@@ -268,7 +317,6 @@ public class JauntObj {
 	 */
 	public static void printMeeting() {
 		
-	    /**
 		// ascii header for the console, can be safely removed
 		System.out.println("CRN, DATE, TIME, LOCATION");
 		System.out.println("-----------------------------------------------------------");
@@ -279,18 +327,17 @@ public class JauntObj {
 					+ item.getTime() + ", " + item.getLocation());
 		}
 		System.out.println("\ntotal courses: " + meetingTimes.size());
-		*/
 		
 	    
 		// ascii header for the console, can be safely removed
-		System.out.println("CRN, DAY, START, END, LOCATION");
+		System.out.println("\nCRN, DAY, START, END, LOCATION");
 		System.out.println("-----------------------------------------------------------");
 		
 		for (JauntRowItem item : meetingTimesIndividual) {
 			 System.out.println(item.getCrn() + ", " + item.getDays() + ", "
 					+ item.getStart() + ", " + item.getEnd() + ", " + item.getLocation());
 		}
-		System.out.println("\ntotal rows: " + meetingTimesIndividual.size());
+		// System.out.println("\ntotal rows: " + meetingTimesIndividual.size());
 		
 	}
 }
